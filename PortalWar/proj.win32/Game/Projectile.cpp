@@ -8,7 +8,7 @@ Projectile* Projectile::createProjectile(const DProjectileInfo& stInfo, Entity* 
 {
 	Projectile* _pProjectile = new(std::nothrow) Projectile();
 	if(stInfo.m_bShow){
-		if (!_pProjectile && !_pProjectile->initWithSpriteFrameName(stInfo.m_sBody)) {
+		if (!_pProjectile || !_pProjectile->initWithSpriteFrameName(stInfo.m_sBody)) {
 			delete _pProjectile;
 			_pProjectile = nullptr;
 			return nullptr;
@@ -26,6 +26,9 @@ Projectile* Projectile::createProjectile(const DProjectileInfo& stInfo, Entity* 
 	_pProjectile->m_bIfDestroy = false;
 	_pProjectile->m_dLastTimer = stInfo.m_dLastTime;
 	_pProjectile->m_nParty = pcSource->getParty();
+	_pProjectile->setPosition(pcSource->getWeaponPos());
+	_pProjectile->setAnchorPoint(Vec2(0.5, 0.5));
+	//_pProjectile->setPosition(pcSource->getPosition());
 	if (stInfo.m_vDirection.x < 0.0) {
 		_pProjectile->setScaleX(-1.0f);
 	}
@@ -40,8 +43,14 @@ cocos2d::Rect Projectile::getBoundRect()
 {
 	Rect _rctBound;
 	Vec2 _vPos = this->getPosition();
-	Vec2 _vSize = this->m_stInfo.m_vBoundSize;
-	_rctBound.origin = _vPos - _vSize / 2;
+	Vec2 _vSize;
+	if (m_stInfo.m_bUseContentSize) {
+		_vSize = this->getContentSize();
+	}
+	else {
+		_vSize = this->m_stInfo.m_vBoundSize;
+	}
+	_rctBound.origin = _vPos;// -_vSize / 2;
 	_rctBound.size = Size(_vSize);
 
 	return _rctBound;
@@ -54,6 +63,8 @@ void Projectile::setDestroy()
 
 void Projectile::update(float delta)
 {
+	
+
 	//ifDestroy
 	if (m_bIfDestroy) {
 		Entity::ms_pcGameScene->getProjectileLayer()->removeChild(this);
@@ -94,7 +105,8 @@ void Projectile::update(float delta)
 				}
 				else {
 					m_setHitList.insert(_pEntity->getID());
-					//perform a hit action, inflict damage, todo
+					//perform a hit action, inflict damage
+					_pEntity->damaged(m_stInfo.m_nType, m_stInfo.m_dAtk);
 				}
 			}
 			else {

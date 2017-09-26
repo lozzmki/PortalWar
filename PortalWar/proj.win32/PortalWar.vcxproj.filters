@@ -23,6 +23,7 @@
     </ClCompile>
     <ClCompile Include="Game\GameScene.cpp" />
     <ClCompile Include="Game\Entity.cpp" />
+    <ClCompile Include="Game\Projectile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -36,6 +37,7 @@
     </ClInclude>
     <ClInclude Include="Game\GameScene.h" />
     <ClInclude Include="Game\Entity.h" />
+    <ClInclude Include="Game\Projectile.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

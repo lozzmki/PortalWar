@@ -3,8 +3,9 @@
 
 #include<cocos2d.h>
 
-const cocos2d::Vec2 RED_START_POINT = Vec2(100.0, 250.0);
-const cocos2d::Vec2 LIME_START_POINT = Vec2(900.0, 250.0);
+
+const cocos2d::Vec2 RED_START_POINT = cocos2d::Vec2(100.0, 250.0);
+const cocos2d::Vec2 LIME_START_POINT = cocos2d::Vec2(900.0, 250.0);
 
 class Entity;
 class GameScene;
@@ -21,21 +22,29 @@ enum enumEntityType {
 	ENTITY_TYPE_KNIGHT,
 	ENTITY_TYPE_ASSASSIN
 };
+enum enumAttackType {
+	ATTACK_TYPE_MELEE,
+	ATTACK_TYPE_RANGE,
+	ATTACK_TYPE_MAGIC,
+};
 
 struct DEntityInfo {
 	double m_dHP;
 	double m_dAtk;
 	double m_dDef;
 	double m_dSpd;
-	double m_dAtkSpd;
+	double m_dAtkIntv;
 	double m_dAtkRng;
 	
+	enumAttackType m_nAtkType;
 	enumEntityType m_nType;
 
+	bool m_bUseContentSize;
 	cocos2d::Vec2 m_vBoundSize;
 
 	std::string m_sBody;
 	std::string m_sWeapon;
+	std::string m_sProjectile;
 };
 
 class EntityStateMachine {

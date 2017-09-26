@@ -114,11 +114,12 @@ void Entity::damaged(int nType, double dDamage)
 	}
 
 	double _dDamage = dDamage * _dFactor - m_stInfo.m_dDef;
+	if (_dDamage < 0.0)_dDamage = 0.0;
 	m_stInfo.m_dHP -= _dDamage;
 	if (m_stInfo.m_dHP <= 0.0) {
 		this->setDestroy();
 	}
-
+	CCLOG("%d Attacked, %f damage.", m_nID, _dDamage);
 }
 
 void Entity::attack(cocos2d::Vec2 vDirection)
@@ -127,9 +128,45 @@ void Entity::attack(cocos2d::Vec2 vDirection)
 		return;
 	}
 	else {
-		//todo
+		//CD
+		m_dAttackTimer = m_stInfo.m_dAtkIntv;
 		//create a projectile towards vDirection
-
+		DProjectileInfo _stProjectile;
+		switch (m_stInfo.m_nAtkType)
+		{
+		case ATTACK_TYPE_MELEE:
+			_stProjectile.m_bShow = false;
+			_stProjectile.m_bMove = false;
+			_stProjectile.m_bUseContentSize = false;
+			_stProjectile.m_vBoundSize = m_pcWeapon->getContentSize();
+			_stProjectile.m_dLastTime = 0.5;
+			break;
+		case ATTACK_TYPE_RANGE:
+			_stProjectile.m_sBody = m_stInfo.m_sProjectile;
+			_stProjectile.m_bShow = true;
+			_stProjectile.m_bMove = true;
+			_stProjectile.m_bUseContentSize = true;
+			_stProjectile.m_dLastTime = 10.0;
+			_stProjectile.m_nAtkNum = 1;
+			_stProjectile.m_vDirection = vDirection;
+			break;
+		case ATTACK_TYPE_MAGIC:
+			_stProjectile.m_sBody = m_stInfo.m_sProjectile;
+			_stProjectile.m_bShow = true;
+			_stProjectile.m_bMove = true;
+			_stProjectile.m_bUseContentSize = true;
+			_stProjectile.m_dLastTime = 10.0;
+			_stProjectile.m_nAtkNum = 2;
+			_stProjectile.m_vDirection = vDirection;
+			break;
+		default:
+			break;
+		}
+		_stProjectile.m_dAtk = m_stInfo.m_dAtk;
+		_stProjectile.m_dSpd = 200.0;
+		_stProjectile.m_nType = m_stInfo.m_nType;
+		
+		Projectile::createProjectile(_stProjectile, this);
 	}
 	
 }
@@ -137,18 +174,28 @@ void Entity::attack(cocos2d::Vec2 vDirection)
 cocos2d::Vec2 Entity::getWeaponPos()
 {
 	Vec2 _vWeapon = m_pcWeapon->getPosition();
+	_vWeapon.y = 0.0;
 	if (m_nFacing) {
 		_vWeapon.x = -_vWeapon.x;
 	}
-	return this->getPosition() + _vWeapon;
+	_vWeapon.x /= 2;
+	//return m_pcWeapon->getPosition();
+	return this->getPosition() +_vWeapon;
+	//return m_pcWeapon->convertToWorldSpace(m_pcWeapon->getPosition());
 }
 
 cocos2d::Rect Entity::getBoundRect()
 {
 	Rect _rctBound;
 	Vec2 _vPos = this->getPosition();
-	Vec2 _vSize = this->m_stInfo.m_vBoundSize;
-	_rctBound.origin = _vPos - _vSize / 2;
+	Vec2 _vSize;
+	if (m_stInfo.m_bUseContentSize) {
+		_vSize = this->getContentSize();
+	}
+	else {
+		_vSize = this->m_stInfo.m_vBoundSize;
+	}
+	_rctBound.origin = _vPos;// -_vSize / 2;
 	_rctBound.size = Size(_vSize);
 
 	return _rctBound;
@@ -158,7 +205,11 @@ void Entity::setDestroy()
 {
 	m_bIfDestroy = true;
 	this->stopAllActions();
-	this->runAction(RotateBy::create(1.0f, -90.0));
+	if(this->m_nFacing)
+		this->runAction(RotateBy::create(0.6f, -90.0));
+	else
+		this->runAction(RotateBy::create(0.6f, 90.0));
+
 	m_dDeadTimer = 1.0;
 }
 
@@ -234,5 +285,9 @@ void EntityStateMachine::onAttack()
 	if (m_pcEntity && !m_pcEntity->ifDestroy() && m_pcTarget && !m_pcTarget->ifDestroy()) {
 		//perform an attack;
 		m_pcEntity->attack(m_pcTarget->getPosition() - m_pcEntity->getPosition());
+	}
+	else {
+		//target lost
+		m_nState = ENTITY_STATE_MOVING;
 	}
 }

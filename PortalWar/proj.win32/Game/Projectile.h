@@ -15,6 +15,7 @@ struct DProjectileInfo {
 	double m_dAtk;
 	double m_dLastTime;
 
+	bool m_bUseContentSize;
 	cocos2d::Vec2 m_vBoundSize;
 
 	bool m_bMove;
