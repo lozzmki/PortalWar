@@ -13,7 +13,7 @@ enum enumLabelType {
 class TextLabel :public cocos2d::Label {
 public:
 	CREATE_FUNC(TextLabel);
-	static TextLabel* createFloatingText(cocos2d::Vec2 vPos, std::string sText, double dTime = 1.0);
+	static TextLabel* createFloatingText(cocos2d::Vec2 vPos, std::string sText, double dTime = 1.0, bool bBoost = false);
 
 	virtual bool init();
 	virtual void update(float delta);

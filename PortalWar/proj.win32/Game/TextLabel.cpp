@@ -2,12 +2,14 @@
 #include "GameScene.h"
 USING_NS_CC;
 
-TextLabel* TextLabel::createFloatingText(Vec2 vPos, std::string sText, double dTime /*= 1.0*/)
+TextLabel* TextLabel::createFloatingText(Vec2 vPos, std::string sText, double dTime /*= 1.0*/, bool bBoost)
 {
 	TTFConfig _stConfig;
 	_stConfig.fontFilePath = "fonts/Marker Felt.ttf";
 	_stConfig.outlineSize = 2;
 	_stConfig.fontSize = 30.0;
+	if (bBoost)
+		_stConfig.fontSize = 60.0;
 	TextLabel* _text = new(std::nothrow)TextLabel();
 	if (!_text || !_text->initWithTTF(_stConfig,sText,TextHAlignment::CENTER,0)) {
 		CCAssert(0, "init failed");
@@ -21,10 +23,12 @@ TextLabel* TextLabel::createFloatingText(Vec2 vPos, std::string sText, double dT
 	_text->m_nType = LABEL_TYPE_FLOAT;
 	_text->m_bActive = true;
 	_text->scheduleUpdate();
-	_text->runAction(MoveBy::create(dTime, Vec2(0.0, 100.0)));
+	_text->runAction(MoveBy::create(dTime, Vec2(50.0*rand_minus1_1(), 100.0)));
 	_text->setPosition(vPos);
 	_text->enableOutline(Color4B(0, 0, 0, 255));
 	_text->setColor(Color3B(255, 192, 64));
+	if (bBoost)
+		_text->setColor(Color3B(255, 64, 0));
 	ms_pcGameScene->getTextlayer()->addChild(_text);
 	return _text;
 }

@@ -20,6 +20,7 @@ private:
 	cocos2d::Layer* m_pcTextLayer;
 	cocos2d::Layer* m_pcUI;
 
+	void initEntities();
 };
 
 #endif

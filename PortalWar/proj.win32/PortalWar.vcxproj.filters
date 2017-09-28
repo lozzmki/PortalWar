@@ -25,6 +25,8 @@
     <ClCompile Include="Game\Entity.cpp" />
     <ClCompile Include="Game\Projectile.cpp" />
     <ClCompile Include="Game\TextLabel.cpp" />
+    <ClCompile Include="Game\Bar.cpp" />
+    <ClCompile Include="Game\Data\EntityInfos.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -40,6 +42,8 @@
     <ClInclude Include="Game\Entity.h" />
     <ClInclude Include="Game\Projectile.h" />
     <ClInclude Include="Game\TextLabel.h" />
+    <ClInclude Include="Game\Bar.h" />
+    <ClInclude Include="Game\Data\EntityInfos.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

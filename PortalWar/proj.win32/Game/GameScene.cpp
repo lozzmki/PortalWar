@@ -1,11 +1,15 @@
 #include "GameScene.h"
 #include "Entity.h"
 #include "TextLabel.h"
+#include "Data/EntityInfos.h"
 
 USING_NS_CC;
 
 bool GameScene::init()
 {
+	//random seed
+	
+
 	Entity::ms_pcGameScene = this;
 	TextLabel::ms_pcGameScene = this;
 
@@ -31,11 +35,13 @@ bool GameScene::init()
 	this->addChild(m_pcGameWorld,1);
 
 	//test
+	/*
 	DEntityInfo _stTestEntity;
 
 	_stTestEntity.m_sBody = "red_unit_body.png";
 	_stTestEntity.m_sWeapon = "sword.png";
 	_stTestEntity.m_dHP = 50.0;
+	_stTestEntity.m_dMaxHP = 50.0;
 	_stTestEntity.m_nType = ENTITY_TYPE_KNIGHT;
 	_stTestEntity.m_dAtkRng = 80.0;
 	_stTestEntity.m_dSpd = 30.0;
@@ -108,6 +114,8 @@ bool GameScene::init()
 	_stTestEntity.m_dSpd = 50.0;
 	_pEntity = Entity::createEntity(_stTestEntity, 0);
 	m_pcGameWorld->addChild(_pEntity);
+	_pEntity = Entity::createEntity(_stTestEntity, 0);
+	m_pcGameWorld->addChild(_pEntity);
 
 	_stTestEntity.m_nType = ENTITY_TYPE_ARCHER;
 	_stTestEntity.m_nAtkType = ATTACK_TYPE_RANGE;
@@ -124,10 +132,17 @@ bool GameScene::init()
 	m_pcGameWorld->addChild(_pEntity);
 	_pEntity = Entity::createEntity(_stTestEntity, 1);
 	m_pcGameWorld->addChild(_pEntity);
-	_pEntity = Entity::createEntity(_stTestEntity, 1);
-	m_pcGameWorld->addChild(_pEntity);
-	_pEntity = Entity::createEntity(_stTestEntity, 1);
-	m_pcGameWorld->addChild(_pEntity);
+	*/
+	for (int i = 0; i < 1; i++) {
+		Entity::createEntity(EntityInfos::s_stWarrior);
+		Entity::createEntity(EntityInfos::s_stWarrior, 1);
+		Entity::createEntity(EntityInfos::s_stArcher);
+		Entity::createEntity(EntityInfos::s_stArcher, 1);
+		Entity::createEntity(EntityInfos::s_stMage);
+		Entity::createEntity(EntityInfos::s_stMage, 1);
+		Entity::createEntity(EntityInfos::s_stKnight);
+		Entity::createEntity(EntityInfos::s_stKnight, 1);
+	}
 	//test over
 
 
@@ -153,6 +168,11 @@ bool GameScene::init()
 }
 
 void GameScene::update(float delta)
+{
+
+}
+
+void GameScene::initEntities()
 {
 
 }

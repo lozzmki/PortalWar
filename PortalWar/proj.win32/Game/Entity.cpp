@@ -2,12 +2,20 @@
 #include"GameScene.h"
 #include"Projectile.h"
 #include"TextLabel.h"
+#include"Bar.h"
 USING_NS_CC;
 
 Entity* Entity::createEntity(const DEntityInfo& stTemplate, int nParty)
 {
 	Entity* _pEntity = new(std::nothrow) Entity();
-	if (!_pEntity || !_pEntity->initWithSpriteFrameName(stTemplate.m_sBody)) {
+	std::string _sBody;
+	if (!nParty) {
+		_sBody = "red_unit_body.png";
+	}
+	else{
+		_sBody = "lime_unit_body.png";
+	}
+	if (!_pEntity || !_pEntity->initWithSpriteFrameName(_sBody)) {
 		delete _pEntity;
 		_pEntity = nullptr;
 		return nullptr;
@@ -27,6 +35,13 @@ Entity* Entity::createEntity(const DEntityInfo& stTemplate, int nParty)
 	//_pEntity->setAnchorPoint(Vec2(1,1));
 	_pEntity->m_pcWeapon->setAnchorPoint(Vec2(0.5,0.5));
 
+	//HPBar
+	_pEntity->m_pcHpBar = Bar::createBar("hp.png", "bars.png");
+	_pEntity->m_pcHpBar->setPosition(Vec2(_pEntity->getContentSize().width/2, _pEntity->getContentSize().height*1.5));
+	_pEntity->m_pcHpBar->setScaleX(0.35);
+	_pEntity->m_pcHpBar->setScaleY(3);
+	_pEntity->addChild(_pEntity->m_pcHpBar);
+
 	_pEntity->m_pcStateMachine = new EntityStateMachine(_pEntity);
 	_pEntity->m_nParty = nParty;
 	_pEntity->autorelease();
@@ -34,15 +49,17 @@ Entity* Entity::createEntity(const DEntityInfo& stTemplate, int nParty)
 	_pEntity->scheduleUpdate();
 
 	if (!nParty) {
-		_pEntity->setPosition(RED_START_POINT);
+		_pEntity->setPosition(RED_START_POINT + Vec2(rand_minus1_1()*50.0, 0.0));
 		_pEntity->setFacing(0);
 	}
 	else{
-		_pEntity->setPosition(LIME_START_POINT);
+		_pEntity->setPosition(LIME_START_POINT + Vec2(rand_minus1_1()*50.0, 0.0));
 		_pEntity->setFacing(1);
 	}
 	//_pEntity->setPosition(Vec2(500.0, 300.0));
 	//_pEntity->runAction(RepeatForever::create(RotateBy::create(0.1, 10)));
+	//add it here
+	ms_pcGameScene->getObjectLayer()->addChild(_pEntity);
 
 	return _pEntity;
 }
@@ -77,10 +94,13 @@ void Entity::update(float delta)
 			m_dAttackTimer -= delta;
 		}
 		m_pcStateMachine->update(delta);
+		double _dHPRatio = m_stInfo.m_dHP/m_stInfo.m_dMaxHP;
+		if (_dHPRatio < 0.0) _dHPRatio = 0.0;
+		m_pcHpBar->setRatio(delta, _dHPRatio*100.0);
 	}
 }
 
-void Entity::damaged(int nType, double dDamage)
+void Entity::damaged(int nType, double dDamage, bool bBoost)
 {
 	enumEntityType _nType = (enumEntityType)nType;
 	double _dFactor = 1.0;
@@ -123,7 +143,7 @@ void Entity::damaged(int nType, double dDamage)
 	CCLOG("%d Attacked, %f damage.", m_nID, _dDamage);
 	char* _sDamageText = new char[100];
 	sprintf(_sDamageText, "-%d", (int)_dDamage);
-	TextLabel::createFloatingText(this->getPosition(), _sDamageText);
+	TextLabel::createFloatingText(this->getPosition(), _sDamageText, 1.0, bBoost);
 	delete _sDamageText;
 }
 
@@ -167,7 +187,16 @@ void Entity::attack(cocos2d::Vec2 vDirection)
 		default:
 			break;
 		}
-		_stProjectile.m_dAtk = m_stInfo.m_dAtk;
+		//ifBoost
+		if (rand_0_1() < 0.05) {
+			_stProjectile.m_bBoost = true;
+			_stProjectile.m_dAtk = m_stInfo.m_dAtk*2.0;
+		}
+		else {
+			_stProjectile.m_bBoost = false;
+			_stProjectile.m_dAtk = m_stInfo.m_dAtk;
+		}
+		
 		_stProjectile.m_dSpd = 200.0;
 		_stProjectile.m_nType = m_stInfo.m_nType;
 		
@@ -200,7 +229,7 @@ cocos2d::Rect Entity::getBoundRect()
 	else {
 		_vSize = this->m_stInfo.m_vBoundSize;
 	}
-	_rctBound.origin = _vPos;// -_vSize / 2;
+	_rctBound.origin = _vPos -_vSize / 2;
 	_rctBound.size = Size(_vSize);
 
 	return _rctBound;
@@ -210,6 +239,7 @@ void Entity::setDestroy()
 {
 	m_bIfDestroy = true;
 	this->stopAllActions();
+	this->removeChild(m_pcHpBar, true);
 	if(this->m_nFacing)
 		this->runAction(RotateBy::create(0.6f, -90.0));
 	else

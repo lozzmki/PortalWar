@@ -9,6 +9,7 @@ const cocos2d::Vec2 LIME_START_POINT = cocos2d::Vec2(900.0, 250.0);
 
 class Entity;
 class GameScene;
+class Bar;
 
 enum enumEntityState {
 	ENTITY_STATE_IDLE,
@@ -30,6 +31,7 @@ enum enumAttackType {
 
 struct DEntityInfo {
 	double m_dHP;
+	double m_dMaxHP;
 	double m_dAtk;
 	double m_dDef;
 	double m_dSpd;
@@ -42,7 +44,7 @@ struct DEntityInfo {
 	bool m_bUseContentSize;
 	cocos2d::Vec2 m_vBoundSize;
 
-	std::string m_sBody;
+	//std::string m_sBody;
 	std::string m_sWeapon;
 	std::string m_sProjectile;
 };
@@ -70,7 +72,7 @@ public:
 	virtual ~Entity();
 	virtual void update(float delta);
 
-	void damaged(int nType, double dDamage);
+	void damaged(int nType, double dDamage, bool bBoost);
 	void attack(cocos2d::Vec2);
 	cocos2d::Vec2 getWeaponPos();
 	cocos2d::Rect getBoundRect();
@@ -87,6 +89,7 @@ public:
 private:
 	EntityStateMachine* m_pcStateMachine;
 	cocos2d::Sprite* m_pcWeapon;
+	Bar* m_pcHpBar;
 
 	int m_nID;
 	int m_nParty;

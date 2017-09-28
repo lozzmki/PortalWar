@@ -50,7 +50,7 @@ cocos2d::Rect Projectile::getBoundRect()
 	else {
 		_vSize = this->m_stInfo.m_vBoundSize;
 	}
-	_rctBound.origin = _vPos;// -_vSize / 2;
+	_rctBound.origin = _vPos -_vSize / 2;
 	_rctBound.size = Size(_vSize);
 
 	return _rctBound;
@@ -106,7 +106,10 @@ void Projectile::update(float delta)
 				else {
 					m_setHitList.insert(_pEntity->getID());
 					//perform a hit action, inflict damage
-					_pEntity->damaged(m_stInfo.m_nType, m_stInfo.m_dAtk);
+					_pEntity->damaged(m_stInfo.m_nType, m_stInfo.m_dAtk, m_stInfo.m_bBoost);
+					if (m_setHitList.size() >= m_stInfo.m_nAtkNum) {
+						this->setDestroy();
+					}
 				}
 			}
 			else {
