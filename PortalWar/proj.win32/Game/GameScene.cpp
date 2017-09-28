@@ -1,11 +1,13 @@
 #include "GameScene.h"
 #include "Entity.h"
+#include "TextLabel.h"
 
 USING_NS_CC;
 
 bool GameScene::init()
 {
 	Entity::ms_pcGameScene = this;
+	TextLabel::ms_pcGameScene = this;
 
 	auto _vSize = Director::getInstance()->getVisibleSize();
 	auto _vOrigin = Director::getInstance()->getVisibleOrigin();
@@ -34,7 +36,7 @@ bool GameScene::init()
 	_stTestEntity.m_sBody = "red_unit_body.png";
 	_stTestEntity.m_sWeapon = "sword.png";
 	_stTestEntity.m_dHP = 50.0;
-	_stTestEntity.m_nType = ENTITY_TYPE_WARRIOR;
+	_stTestEntity.m_nType = ENTITY_TYPE_KNIGHT;
 	_stTestEntity.m_dAtkRng = 80.0;
 	_stTestEntity.m_dSpd = 30.0;
 	_stTestEntity.m_dAtk = 4.0;
@@ -44,6 +46,14 @@ bool GameScene::init()
 	_stTestEntity.m_dDef = 1.0;
 	_stTestEntity.m_nAtkType = ATTACK_TYPE_MELEE;
 	Entity* _pEntity = Entity::createEntity(_stTestEntity,0);
+	m_pcGameWorld->addChild(_pEntity);
+	_pEntity = Entity::createEntity(_stTestEntity, 0);
+	m_pcGameWorld->addChild(_pEntity);
+	_pEntity = Entity::createEntity(_stTestEntity, 0);
+	m_pcGameWorld->addChild(_pEntity);
+	_pEntity = Entity::createEntity(_stTestEntity, 0);
+	m_pcGameWorld->addChild(_pEntity);
+	_pEntity = Entity::createEntity(_stTestEntity, 0);
 	m_pcGameWorld->addChild(_pEntity);
 	_stTestEntity.m_sBody = "lime_unit_body.png";
 	_pEntity = Entity::createEntity(_stTestEntity, 1);
@@ -66,11 +76,21 @@ bool GameScene::init()
 	_stTestEntity.m_dSpd = 60.0;
 	_pEntity = Entity::createEntity(_stTestEntity, 1);
 	m_pcGameWorld->addChild(_pEntity);
+	_stTestEntity.m_dSpd = 60.0;
+	_pEntity = Entity::createEntity(_stTestEntity, 1);
+	m_pcGameWorld->addChild(_pEntity);
+	_stTestEntity.m_dSpd = 60.0;
+	_pEntity = Entity::createEntity(_stTestEntity, 1);
+	m_pcGameWorld->addChild(_pEntity);
+	_stTestEntity.m_dSpd = 60.0;
+	_pEntity = Entity::createEntity(_stTestEntity, 1);
+	m_pcGameWorld->addChild(_pEntity);
 
 	_stTestEntity.m_nType = ENTITY_TYPE_MAGE;
 	_stTestEntity.m_dAtkRng = 400.0;
 	_stTestEntity.m_nAtkType = ATTACK_TYPE_MAGIC;
-	_stTestEntity.m_sProjectile = "sword.png";
+	_stTestEntity.m_sWeapon = "staff.png";
+	_stTestEntity.m_sProjectile = "magic_bolt.png";
 	_pEntity = Entity::createEntity(_stTestEntity, 1);
 	m_pcGameWorld->addChild(_pEntity);
 	_stTestEntity.m_sBody = "red_unit_body.png";
@@ -88,6 +108,26 @@ bool GameScene::init()
 	_stTestEntity.m_dSpd = 50.0;
 	_pEntity = Entity::createEntity(_stTestEntity, 0);
 	m_pcGameWorld->addChild(_pEntity);
+
+	_stTestEntity.m_nType = ENTITY_TYPE_ARCHER;
+	_stTestEntity.m_nAtkType = ATTACK_TYPE_RANGE;
+	_stTestEntity.m_sWeapon = "bow.png";
+	_stTestEntity.m_sProjectile = "bolt.png";
+	_stTestEntity.m_sBody = "lime_unit_body.png";
+	_pEntity = Entity::createEntity(_stTestEntity, 1);
+	m_pcGameWorld->addChild(_pEntity);
+	_pEntity = Entity::createEntity(_stTestEntity, 1);
+	m_pcGameWorld->addChild(_pEntity);
+	_pEntity = Entity::createEntity(_stTestEntity, 1);
+	m_pcGameWorld->addChild(_pEntity);
+	_pEntity = Entity::createEntity(_stTestEntity, 1);
+	m_pcGameWorld->addChild(_pEntity);
+	_pEntity = Entity::createEntity(_stTestEntity, 1);
+	m_pcGameWorld->addChild(_pEntity);
+	_pEntity = Entity::createEntity(_stTestEntity, 1);
+	m_pcGameWorld->addChild(_pEntity);
+	_pEntity = Entity::createEntity(_stTestEntity, 1);
+	m_pcGameWorld->addChild(_pEntity);
 	//test over
 
 
@@ -98,8 +138,15 @@ bool GameScene::init()
 	m_pcProjectiles->setScaleY(_dScaleY);
 	this->addChild(m_pcProjectiles,2);
 
+	m_pcTextLayer = Layer::create();
+	m_pcTextLayer->scheduleUpdate();
+	m_pcTextLayer->setAnchorPoint(Vec2::ZERO);
+	m_pcTextLayer->setScaleX(_dScaleX);
+	m_pcTextLayer->setScaleY(_dScaleY);
+	this->addChild(m_pcTextLayer,3);
+
 	m_pcUI = Layer::create();
-	this->addChild(m_pcUI);
+	this->addChild(m_pcUI,4);
 
 
 	return true;

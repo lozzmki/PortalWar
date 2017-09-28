@@ -1,6 +1,7 @@
 #include"Entity.h"
 #include"GameScene.h"
 #include"Projectile.h"
+#include"TextLabel.h"
 USING_NS_CC;
 
 Entity* Entity::createEntity(const DEntityInfo& stTemplate, int nParty)
@@ -120,6 +121,10 @@ void Entity::damaged(int nType, double dDamage)
 		this->setDestroy();
 	}
 	CCLOG("%d Attacked, %f damage.", m_nID, _dDamage);
+	char* _sDamageText = new char[100];
+	sprintf(_sDamageText, "-%d", (int)_dDamage);
+	TextLabel::createFloatingText(this->getPosition(), _sDamageText);
+	delete _sDamageText;
 }
 
 void Entity::attack(cocos2d::Vec2 vDirection)
